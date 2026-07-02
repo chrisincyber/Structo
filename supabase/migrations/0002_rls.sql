@@ -251,4 +251,7 @@ create policy activity_log_select on public.activity_log
 
 create policy sync_ops_select on public.sync_ops
   for select using (user_id = auth.uid());
--- sync_ops inserts happen only via the sync-push Edge Function (service role)
+create policy sync_ops_insert on public.sync_ops
+  for insert with check (user_id = auth.uid());
+-- sync_ops rows are written by apply_sync_ops()/complete_task() (SECURITY
+-- INVOKER), so users insert their own dedupe-ledger rows; never updated/deleted.

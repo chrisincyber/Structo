@@ -13,12 +13,16 @@ the task's `completed_at` stays NULL until permanent completion.
   "interval": 1,
   "weekdays": [1, 3, 5],
   "monthday": 15,
+  "anchor": "2026-07-07",
   "mode": "fixed | after_completion"
 }
 ```
 
 - `weekdays` only with `freq=weekly` (ISO, 1=Mon). Absent = anchor weekday.
 - `monthday` only with `freq=monthly`. Absent = anchor day-of-month.
+- `anchor` = the due date at rule creation; written by the parser/picker and
+  rewritten on "all future" edits. It fixes the phase of `interval > 1` weekly
+  rules and the day-of-month/weekday defaults. Absent = treat `from` as anchor.
 - `mode=fixed` (default): next occurrence advances from the **current due date**.
 - `mode=after_completion` ("every!"): next occurrence advances from the
   **completion date** (user-local).

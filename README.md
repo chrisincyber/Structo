@@ -21,11 +21,20 @@ ios/        SwiftUI app + SPM packages (PlanoaKit, PlanoaData, PlanoaUI, Feature
 web/        Next.js app — next
 ```
 
-## M0 status
+## Status (backlog §18)
 
+**M0 — done, verified against Postgres 16:**
 - `supabase/migrations/0001_schema.sql` — full schema v1 (blueprint §10): all tables incl. dormant collaboration tables, triggers (updated_at, signup bootstrap, cycle/immutability guards), indexes, FTS.
 - `supabase/migrations/0002_rls.sql` — deny-by-default RLS routed through `is_project_member()` (§12.5).
-- `supabase/tests/001_rls_personas.sql` — pgTAP owner/stranger persona harness; grows with every policy.
-- `spec/` — recurrence, streaks, and quick-add grammars with starter conformance vectors (~45; target ~60 before M1 exit), plus `tokens/tokens.json` design token source.
+- `spec/` — recurrence, streaks, and quick-add grammars with starter conformance vectors (~47; target ~60 before M1 exit), plus `tokens/tokens.json` design token source.
+- `.github/workflows/ci.yml` — spec validation + migrations + SQL test suites + recurrence vectors on every PR.
 
-Migrations have not yet been applied to a Supabase project; `supabase db reset` against a fresh local stack is the first CI job to wire up.
+**M1 (sync spine) — server side in place, verified:**
+- `supabase/migrations/0003_recurrence.sql` — `next_occurrence()` (passes all 16 spec vectors) + `complete_task()` atomic complete-and-roll RPC with op dedupe.
+- `supabase/migrations/0004_sync.sql` — `apply_sync_ops()`: ordered, transactional, idempotent op batches (upsert / delete-tombstone / complete_task), RLS-enforced (SECURITY INVOKER).
+- `supabase/functions/sync-push/index.ts` — thin Edge Function over `apply_sync_ops` (auth, validation, size caps).
+- `supabase/tests/` — persona + sync-op suites, plain-SQL asserts, runnable on any Postgres via `tests/helpers/auth_shim.sql`.
+
+**Next:** delta-pull query contract, Realtime poke channel, then client data layers (iOS GRDB mirror, web TanStack Query + mutations funnel).
+
+Migrations have not yet been applied to a real Supabase project — CI runs them against vanilla Postgres 16 with the auth shim.

@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  spec-vectors:
+    name: Spec files are well-formed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate spec JSON
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, sys
+          files = sorted(pathlib.Path('spec').rglob('*.json'))
+          assert files, 'no spec JSON files found'
+          for f in files:
+              data = json.loads(f.read_text())
+              if 'vectors' in data:
+                  names = [v['name'] for v in data['vectors']]
+                  assert len(names) == len(set(names)), f'duplicate vector names in {f}'
+              print(f'ok {f}')
+          PY
+
+  database:
+    name: Migrations, RLS personas, sync ops, recurrence vectors
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 5432:5432
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: planoa_ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create database
+        run: createdb planoa_ci
+
+      - name: Apply auth shim + migrations in order
+        run: |
+          psql -v ON_ERROR_STOP=1 -f supabase/tests/helpers/auth_shim.sql
+          for f in supabase/migrations/*.sql; do
+            echo "== $f"
+            psql -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Run SQL test suites
+        run: |
+          for f in supabase/tests/0*.sql; do
+            echo "== $f"
+            psql -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Recurrence conformance vectors vs next_occurrence()
+        run: python3 scripts/check_recurrence_vectors.py | psql -v ON_ERROR_STOP=1 -f -
