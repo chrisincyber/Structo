@@ -1,0 +1,119 @@
+{
+  "spec": "quick-add",
+  "version": 1,
+  "description": "Capture parser conformance vectors. ref = reference moment in the user's local zone. 2026-07-02 is a Thursday.",
+  "default_ref": { "date": "2026-07-02", "time": "09:00", "week_start": 1, "time_format": "24h" },
+  "vectors": [
+    {
+      "name": "canonical_tomorrow_time",
+      "input": "Call dentist tomorrow 10am",
+      "expect": { "title": "Call dentist", "due_date": "2026-07-03", "due_time": "10:00" }
+    },
+    {
+      "name": "plain_title_no_extraction",
+      "input": "Buy milk",
+      "expect": { "title": "Buy milk" }
+    },
+    {
+      "name": "whole_word_only_tomorrowland",
+      "input": "Read Tomorrowland review",
+      "expect": { "title": "Read Tomorrowland review" },
+      "why": "Grammar rule 1: 'tomorrow' inside a word never matches."
+    },
+    {
+      "name": "title_may_not_become_empty",
+      "input": "tomorrow",
+      "expect": { "title": "tomorrow" },
+      "why": "Grammar rule 3: extraction cancelled when it would empty the title."
+    },
+    {
+      "name": "weekday_resolves_strictly_forward",
+      "input": "Submit report thursday",
+      "expect": { "title": "Submit report", "due_date": "2026-07-09" },
+      "why": "Ref is Thursday; 'thursday' means NEXT Thursday, strictly after ref."
+    },
+    {
+      "name": "next_week_uses_week_start",
+      "input": "Plan sprint next week",
+      "expect": { "title": "Plan sprint", "due_date": "2026-07-06" }
+    },
+    {
+      "name": "in_n_days",
+      "input": "Follow up in 3 days",
+      "expect": { "title": "Follow up", "due_date": "2026-07-05" }
+    },
+    {
+      "name": "bare_time_past_rolls_to_tomorrow",
+      "input": "Standup notes at 8am",
+      "expect": { "title": "Standup notes", "due_date": "2026-07-03", "due_time": "08:00" },
+      "why": "Ref is 09:00; 8am already passed today."
+    },
+    {
+      "name": "bare_time_future_is_today",
+      "input": "Call bank at 15:30",
+      "expect": { "title": "Call bank", "due_date": "2026-07-02", "due_time": "15:30" }
+    },
+    {
+      "name": "project_label_priority_tokens",
+      "input": "Fix login bug #Work @bug p1 tomorrow",
+      "expect": {
+        "title": "Fix login bug",
+        "project": "Work",
+        "labels": ["bug"],
+        "priority": 1,
+        "due_date": "2026-07-03"
+      }
+    },
+    {
+      "name": "p_token_whole_word_only",
+      "input": "Review p1 metrics dashboard",
+      "expect": { "title": "Review p1 metrics dashboard" },
+      "why": "Locked rule: a p-token is extracted only at the end of input or adjacent to other tokens; mid-prose 'p1' surrounded by plain words stays literal."
+    },
+    {
+      "name": "recurrence_sets_rule_and_anchor",
+      "input": "water plants every saturday",
+      "expect": {
+        "title": "water plants",
+        "due_date": "2026-07-04",
+        "recurrence": { "v": 1, "freq": "weekly", "interval": 1, "weekdays": [6], "mode": "fixed" }
+      }
+    },
+    {
+      "name": "recurrence_after_completion_bang",
+      "input": "Water filter every! 30 days",
+      "expect": {
+        "title": "Water filter",
+        "due_date": "2026-08-01",
+        "recurrence": { "v": 1, "freq": "daily", "interval": 30, "mode": "after_completion" }
+      }
+    },
+    {
+      "name": "every_weekday",
+      "input": "Journal every weekday",
+      "expect": {
+        "title": "Journal",
+        "due_date": "2026-07-03",
+        "recurrence": { "v": 1, "freq": "weekly", "interval": 1, "weekdays": [1, 2, 3, 4, 5], "mode": "fixed" }
+      }
+    },
+    {
+      "name": "rightmost_date_wins",
+      "input": "Move friday boxes tomorrow",
+      "expect": { "title": "Move friday boxes", "due_date": "2026-07-03" },
+      "why": "Grammar rule 2: rightmost date phrase extracted; 'friday' stays literal."
+    },
+    {
+      "name": "explicit_date_month_name",
+      "input": "Renew passport jul 15",
+      "expect": { "title": "Renew passport", "due_date": "2026-07-15" }
+    },
+    {
+      "name": "unknown_project_stays_literal",
+      "input": "Ship #NonexistentProject build",
+      "projects": ["Work", "Home"],
+      "expect": { "title": "Ship #NonexistentProject build" },
+      "why": "Unknown project token is literal text (grammar Tokens table)."
+    }
+  ]
+}

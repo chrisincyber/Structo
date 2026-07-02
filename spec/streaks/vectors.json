@@ -1,0 +1,136 @@
+{
+  "spec": "streaks",
+  "version": 1,
+  "description": "Streak conformance vectors. Dates ISO, weekdays ISO (1=Mon). week_start defaults to 1. Logs are [logged_for, value] pairs.",
+  "vectors": [
+    {
+      "name": "binary_daily_simple_run",
+      "habit": { "type": "binary", "schedule": { "kind": "daily" } },
+      "logs": [["2026-06-29", 1], ["2026-06-30", 1], ["2026-07-01", 1]],
+      "today": "2026-07-02",
+      "expect": { "current": 3, "best": 3, "unit": "days" },
+      "why": "Today is pending, not a miss; streak counts through yesterday."
+    },
+    {
+      "name": "binary_daily_today_logged_extends",
+      "habit": { "type": "binary", "schedule": { "kind": "daily" } },
+      "logs": [["2026-07-01", 1], ["2026-07-02", 1]],
+      "today": "2026-07-02",
+      "expect": { "current": 2, "best": 2, "unit": "days" }
+    },
+    {
+      "name": "binary_daily_miss_breaks",
+      "habit": { "type": "binary", "schedule": { "kind": "daily" } },
+      "logs": [["2026-06-28", 1], ["2026-06-29", 1], ["2026-07-01", 1]],
+      "today": "2026-07-02",
+      "expect": { "current": 1, "best": 2, "unit": "days" },
+      "why": "2026-06-30 missed; best remembers the earlier 2-day run."
+    },
+    {
+      "name": "weekdays_schedule_skips_unscheduled",
+      "habit": { "type": "binary", "schedule": { "kind": "weekdays", "days": [1, 3, 5] } },
+      "logs": [["2026-06-29", 1], ["2026-07-01", 1], ["2026-07-03", 1]],
+      "today": "2026-07-04",
+      "expect": { "current": 3, "best": 3, "unit": "days" },
+      "why": "Mon/Wed/Fri habit: Tue/Thu/Sat are neutral, streak unbroken across them."
+    },
+    {
+      "name": "weekdays_missed_scheduled_day_breaks",
+      "habit": { "type": "binary", "schedule": { "kind": "weekdays", "days": [1, 3, 5] } },
+      "logs": [["2026-06-29", 1], ["2026-07-03", 1]],
+      "today": "2026-07-04",
+      "expect": { "current": 1, "best": 1, "unit": "days" },
+      "why": "Wednesday 2026-07-01 was scheduled and missed."
+    },
+    {
+      "name": "quantity_target_met_counts",
+      "habit": { "type": "quantity", "schedule": { "kind": "daily" }, "target_value": 8 },
+      "logs": [
+        ["2026-07-01", 3], ["2026-07-01", 3], ["2026-07-01", 2],
+        ["2026-07-02", 5]
+      ],
+      "today": "2026-07-02",
+      "expect": { "current": 1, "best": 1, "unit": "days" },
+      "why": "Yesterday summed 8/8 and counts; today 5/8 is pending, not a miss."
+    },
+    {
+      "name": "quantity_partial_never_counts",
+      "habit": { "type": "quantity", "schedule": { "kind": "daily" }, "target_value": 8 },
+      "logs": [["2026-06-30", 8], ["2026-07-01", 7]],
+      "today": "2026-07-02",
+      "expect": { "current": 0, "best": 1, "unit": "days" },
+      "why": "7/8 yesterday breaks the streak; partial progress shows in the ring only."
+    },
+    {
+      "name": "quantity_compensating_entry_nets_out",
+      "habit": { "type": "quantity", "schedule": { "kind": "daily" }, "target_value": 8 },
+      "logs": [["2026-07-01", 9], ["2026-07-01", -2]],
+      "today": "2026-07-02",
+      "expect": { "current": 0, "best": 0, "unit": "days" },
+      "why": "9 - 2 = 7 < 8; corrections are negative entries, never row edits (§5.4)."
+    },
+    {
+      "name": "frequency_week_streak",
+      "habit": { "type": "frequency", "schedule": { "kind": "per_week" }, "times_per_week": 3 },
+      "logs": [
+        ["2026-06-15", 1], ["2026-06-17", 1], ["2026-06-19", 1],
+        ["2026-06-22", 1], ["2026-06-24", 1], ["2026-06-26", 1],
+        ["2026-06-29", 1], ["2026-07-01", 1]
+      ],
+      "today": "2026-07-02",
+      "expect": { "current": 2, "best": 2, "unit": "weeks" },
+      "why": "Weeks of Jun 15 and Jun 22 hit 3x; current week (2 of 3) is pending, not a miss."
+    },
+    {
+      "name": "frequency_current_week_target_met_extends",
+      "habit": { "type": "frequency", "schedule": { "kind": "per_week" }, "times_per_week": 2 },
+      "logs": [
+        ["2026-06-23", 1], ["2026-06-25", 1],
+        ["2026-06-29", 1], ["2026-06-30", 1]
+      ],
+      "today": "2026-07-01",
+      "expect": { "current": 2, "best": 2, "unit": "weeks" },
+      "why": "Current week already at 2 of 2 extends the streak mid-week."
+    },
+    {
+      "name": "frequency_overshoot_counts_once",
+      "habit": { "type": "frequency", "schedule": { "kind": "per_week" }, "times_per_week": 3 },
+      "logs": [
+        ["2026-06-22", 1], ["2026-06-23", 1], ["2026-06-24", 1],
+        ["2026-06-25", 1], ["2026-06-26", 1]
+      ],
+      "today": "2026-07-02",
+      "expect": { "current": 1, "best": 1, "unit": "weeks" },
+      "why": "5 of 3 is one satisfied week ('4 of 3 ✓' is presentation, §8.8)."
+    },
+    {
+      "name": "pause_days_are_neutral",
+      "habit": {
+        "type": "binary",
+        "schedule": { "kind": "daily" },
+        "pauses": [{ "from": "2026-06-25", "to": "2026-06-29" }]
+      },
+      "logs": [["2026-06-23", 1], ["2026-06-24", 1], ["2026-06-30", 1], ["2026-07-01", 1]],
+      "today": "2026-07-02",
+      "expect": { "current": 4, "best": 4, "unit": "days" },
+      "why": "Vacation pause bridges the gap; paused days neither count nor break (§5.5)."
+    },
+    {
+      "name": "backfill_repairs_walk",
+      "habit": { "type": "binary", "schedule": { "kind": "daily" } },
+      "logs": [["2026-06-30", 1], ["2026-07-02", 1], ["2026-07-01", 1]],
+      "today": "2026-07-02",
+      "expect": { "current": 3, "best": 3, "unit": "days" },
+      "why": "The 2026-07-01 log was entered late (last in array order) — order of entry is irrelevant, logged_for governs."
+    },
+    {
+      "name": "week_start_sunday_changes_buckets",
+      "habit": { "type": "frequency", "schedule": { "kind": "per_week" }, "times_per_week": 2 },
+      "week_start": 7,
+      "logs": [["2026-06-27", 1], ["2026-06-28", 1], ["2026-06-29", 1]],
+      "today": "2026-07-01",
+      "expect": { "current": 1, "best": 1, "unit": "weeks" },
+      "why": "With Sunday start, Jun 28 opens a new week: prior week (…Jun 27) has 1 of 2 and fails; current week has 2 and is satisfied. With Monday start this would differ — week_start matters."
+    }
+  ]
+}
