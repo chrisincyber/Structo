@@ -37,6 +37,10 @@ web/        Next.js app — next
 - `supabase/functions/sync-push/index.ts` — thin Edge Function over `apply_sync_ops` (auth, validation, size caps).
 - `supabase/tests/` — persona, sync-op, and delta-pull suites; plain-SQL asserts, runnable on any Postgres via `tests/helpers/auth_shim.sql`.
 
-**Next:** Realtime poke channel wiring, reminder dispatch job, then client data layers (iOS GRDB mirror, web TanStack Query + mutations funnel).
+**Backend jobs & realtime — complete, verified:**
+- `supabase/migrations/0007_dispatch.sql` — reminder/agenda dispatchers (idempotent via notification dedupe keys, timezone-aware firing windows, "already done today" suppression) + per-user Realtime poke triggers (`realtime.send` on Supabase, `pg_notify` fallback locally).
+- `supabase/setup/cron.sql` — pg_cron schedules, applied once on a real Supabase project (not part of the migration chain).
 
-Migrations have not yet been applied to a real Supabase project — CI runs them against vanilla Postgres 16 with the auth shim.
+**Next:** web app (Next.js shell, auth, mutations funnel + delta-pull client, Today/Inbox views), then iOS.
+
+Migrations have not yet been applied to a real Supabase project — CI runs them against vanilla Postgres 16 with the auth shim. When a Supabase project is available: apply `supabase/migrations/*` in order, run `supabase/setup/cron.sql` once, deploy `supabase/functions/sync-push`. Nothing else.
