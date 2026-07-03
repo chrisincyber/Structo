@@ -10,14 +10,19 @@
 create extension if not exists pg_trgm;
 
 -- ---------------------------------------------------------------------------
--- Shared trigger: server-authoritative updated_at
+-- Shared trigger: server-authoritative updated_at.
+-- clock_timestamp(), not now(): now() is frozen at transaction start, so every
+-- row touched in one transaction (e.g. an apply_sync_ops batch) would share
+-- one timestamp and a delta-pull cursor could never advance past it. Real
+-- wall-clock per statement keeps cursors monotonic; ties that remain are
+-- handled by the (updated_at, id) keyset in pull_table_deltas.
 -- ---------------------------------------------------------------------------
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
 as $$
 begin
-  new.updated_at = now();
+  new.updated_at = clock_timestamp();
   return new;
 end;
 $$;

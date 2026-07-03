@@ -29,12 +29,14 @@ web/        Next.js app — next
 - `spec/` — recurrence, streaks, and quick-add grammars with starter conformance vectors (~47; target ~60 before M1 exit), plus `tokens/tokens.json` design token source.
 - `.github/workflows/ci.yml` — spec validation + migrations + SQL test suites + recurrence vectors on every PR.
 
-**M1 (sync spine) — server side in place, verified:**
+**M1 (sync spine) — server side complete, verified:**
 - `supabase/migrations/0003_recurrence.sql` — `next_occurrence()` (passes all 16 spec vectors) + `complete_task()` atomic complete-and-roll RPC with op dedupe.
 - `supabase/migrations/0004_sync.sql` — `apply_sync_ops()`: ordered, transactional, idempotent op batches (upsert / delete-tombstone / complete_task), RLS-enforced (SECURITY INVOKER).
+- `supabase/migrations/0005_streaks.sql` — `compute_streak()` pure streak engine (passes all 14 spec vectors) + `refresh_habit_stats()` rollup for pg_cron.
+- `supabase/migrations/0006_delta_pull.sql` — `pull_table_deltas()`: per-table keyset-cursor delta pull with tombstones (the client pull loop's contract). `updated_at` uses `clock_timestamp()` so cursors advance past multi-row transactions.
 - `supabase/functions/sync-push/index.ts` — thin Edge Function over `apply_sync_ops` (auth, validation, size caps).
-- `supabase/tests/` — persona + sync-op suites, plain-SQL asserts, runnable on any Postgres via `tests/helpers/auth_shim.sql`.
+- `supabase/tests/` — persona, sync-op, and delta-pull suites; plain-SQL asserts, runnable on any Postgres via `tests/helpers/auth_shim.sql`.
 
-**Next:** delta-pull query contract, Realtime poke channel, then client data layers (iOS GRDB mirror, web TanStack Query + mutations funnel).
+**Next:** Realtime poke channel wiring, reminder dispatch job, then client data layers (iOS GRDB mirror, web TanStack Query + mutations funnel).
 
 Migrations have not yet been applied to a real Supabase project — CI runs them against vanilla Postgres 16 with the auth shim.

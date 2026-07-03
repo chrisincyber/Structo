@@ -68,3 +68,6 @@ jobs:
 
       - name: Recurrence conformance vectors vs next_occurrence()
         run: python3 scripts/check_recurrence_vectors.py | psql -v ON_ERROR_STOP=1 -f -
+
+      - name: Streak conformance vectors vs compute_streak()
+        run: python3 scripts/check_streak_vectors.py | psql -v ON_ERROR_STOP=1 -f -
