@@ -41,6 +41,11 @@ web/        Next.js app — next
 - `supabase/migrations/0007_dispatch.sql` — reminder/agenda dispatchers (idempotent via notification dedupe keys, timezone-aware firing windows, "already done today" suppression) + per-user Realtime poke triggers (`realtime.send` on Supabase, `pg_notify` fallback locally).
 - `supabase/setup/cron.sql` — pg_cron schedules, applied once on a real Supabase project (not part of the migration chain).
 
-**Next:** web app (Next.js shell, auth, mutations funnel + delta-pull client, Today/Inbox views), then iOS.
+**Web app (`web/`) — shell, auth, first screens, NL quick add:**
+- Login (magic link), sidebar shell with poke-driven query invalidation, Today (overdue group + habits band), Inbox, Habits, first-cut Home.
+- Quick-add parser implementing `spec/quick-add` — all 17 conformance vectors green (Vitest) — with live, dismissable extraction chips in the composer.
+- CI web job: lint, conformance tests, build.
+
+**Next:** project views + task detail, habit creation, then Supabase go-live and iOS.
 
 Migrations have not yet been applied to a real Supabase project — CI runs them against vanilla Postgres 16 with the auth shim. When a Supabase project is available: apply `supabase/migrations/*` in order, run `supabase/setup/cron.sql` once, deploy `supabase/functions/sync-push`. Nothing else.
