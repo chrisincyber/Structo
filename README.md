@@ -46,6 +46,10 @@ web/        Next.js app — next
 - Quick-add parser implementing `spec/quick-add` — all 17 conformance vectors green (Vitest) — with live, dismissable extraction chips in the composer.
 - CI web job: lint, conformance tests, build.
 
-**Next:** project views + task detail, habit creation, then Supabase go-live and iOS.
+**Web app — MVP surface complete:** Upcoming, habit detail (streak header, 10-week backfill calendar), search (FTS), Completed, Settings (6 accents, default landing), the full §6 widget dashboard (7 operational widgets, edit mode, synced layout, soft cap), g-navigation shortcuts. TypeScript streak engine passes all 14 spec vectors.
+
+**iOS — StructoKit begun:** pure domain package (CivilDate, Recurrence, Streaks) with vector-driven XCTest targets; CI swift job verifies against the same spec vectors as web and Postgres.
+
+**Next:** Supabase go-live (needs a free project slot), web deploy, then the SwiftUI app itself (StructoData sync engine + surfaces).
 
 Migrations have not yet been applied to a real Supabase project — CI runs them against vanilla Postgres 16 with the auth shim. When a Supabase project is available: apply `supabase/migrations/*` in order, run `supabase/setup/cron.sql` once, deploy `supabase/functions/sync-push`. Nothing else.

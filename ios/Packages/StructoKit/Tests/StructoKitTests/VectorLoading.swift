@@ -18,11 +18,15 @@ enum Vectors {
             .deletingLastPathComponent() // repo root
     }
 
-    static func load(_ specPath: String) throws -> [[String: Any]] {
+    static func loadRoot(_ specPath: String) throws -> [String: Any] {
         let url = repoRoot.appendingPathComponent(specPath)
         let data = try Data(contentsOf: url)
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        let vectors = json?["vectors"] as? [[String: Any]]
+        return try XCTUnwrap(json, "no JSON object in \(specPath)")
+    }
+
+    static func load(_ specPath: String) throws -> [[String: Any]] {
+        let vectors = try loadRoot(specPath)["vectors"] as? [[String: Any]]
         return try XCTUnwrap(vectors, "no vectors array in \(specPath)")
     }
 }
