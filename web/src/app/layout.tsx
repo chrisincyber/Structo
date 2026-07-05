@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Planoa",
+  title: "Structo",
   description: "Your day, in one place.",
 };
 

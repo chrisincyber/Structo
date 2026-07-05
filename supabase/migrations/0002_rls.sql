@@ -1,4 +1,4 @@
--- Planoa RLS v1 — implements PLANOA_BLUEPRINT.md §12.5.
+-- Structo RLS v1 — implements STRUCTO_BLUEPRINT.md §12.5.
 -- Principles:
 --   * Deny-by-default on every table.
 --   * ALL project-scoped access routes through is_project_member(), even while

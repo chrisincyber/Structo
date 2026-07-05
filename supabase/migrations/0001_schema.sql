@@ -1,4 +1,4 @@
--- Planoa schema v1 — implements PLANOA_BLUEPRINT.md §10.
+-- Structo schema v1 — implements STRUCTO_BLUEPRINT.md §10.
 -- Conventions:
 --   * PKs are client-generated UUIDv7; gen_random_uuid() is a server-side fallback
 --     for rows created by triggers/jobs.

@@ -6,7 +6,7 @@
 begin;
 
 insert into auth.users (id, email) values
-  ('00000000-0000-0000-0000-00000000aaaa', 'owner@test.planoa');
+  ('00000000-0000-0000-0000-00000000aaaa', 'owner@test.structo');
 
 -- Profile timezone is UTC (default), so local_* == now() in assertions.
 insert into public.projects (id, workspace_id, owner_id, name)

@@ -5,8 +5,8 @@
 begin;
 
 insert into auth.users (id, email) values
-  ('00000000-0000-0000-0000-00000000aaaa', 'owner@test.planoa'),
-  ('00000000-0000-0000-0000-00000000bbbb', 'stranger@test.planoa');
+  ('00000000-0000-0000-0000-00000000aaaa', 'owner@test.structo'),
+  ('00000000-0000-0000-0000-00000000bbbb', 'stranger@test.structo');
 
 insert into public.projects (id, workspace_id, owner_id, name)
 select '00000000-0000-0000-0000-000000000001', w.id, '00000000-0000-0000-0000-00000000aaaa', 'Owner Project'

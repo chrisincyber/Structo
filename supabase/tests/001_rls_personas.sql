@@ -12,8 +12,8 @@ begin;
 
 -- Fixtures: two signups; the signup trigger bootstraps workspace/inbox/prefs/layouts.
 insert into auth.users (id, email) values
-  ('00000000-0000-0000-0000-00000000aaaa', 'owner@test.planoa'),
-  ('00000000-0000-0000-0000-00000000bbbb', 'stranger@test.planoa');
+  ('00000000-0000-0000-0000-00000000aaaa', 'owner@test.structo'),
+  ('00000000-0000-0000-0000-00000000bbbb', 'stranger@test.structo');
 
 do $$
 begin

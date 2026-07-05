@@ -41,7 +41,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1">
       <aside className="flex w-56 shrink-0 flex-col border-r border-hairline p-4">
-        <p className="px-2 pb-4 text-lg font-bold tracking-tight">Planoa</p>
+        <p className="px-2 pb-4 text-lg font-bold tracking-tight">Structo</p>
         <nav className="space-y-0.5">
           {NAV.map((item) => (
             <Link

@@ -209,7 +209,7 @@ begin
       true                         -- private channel; RLS on realtime.messages
     );
   else
-    perform pg_notify('planoa_poke',
+    perform pg_notify('structo_poke',
       jsonb_build_object('user_id', p_user_id, 'table', p_table)::text);
   end if;
 end;

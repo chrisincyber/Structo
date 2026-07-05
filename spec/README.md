@@ -1,8 +1,8 @@
-# spec/ — Planoa shared behavior specification
+# spec/ — Structo shared behavior specification
 
 This package is the two-frontend insurance policy (blueprint §12.1): every piece of
 tricky domain logic is defined **here first** as a grammar/rules document plus JSON
-conformance vectors, and implemented twice — in Swift (`ios/Packages/PlanoaKit`) and
+conformance vectors, and implemented twice — in Swift (`ios/Packages/StructoKit`) and
 TypeScript (`web/`). Both test suites load the same vector files; CI fails if either
 platform disagrees with the vectors.
 
@@ -12,9 +12,9 @@ platform disagrees with the vectors.
 
 | Directory | Spec | Consumed by |
 |---|---|---|
-| `recurrence/` | Recurrence rule semantics + next-occurrence math (§11.1) | PlanoaKit `Recurrence/`, web `lib/recurrence`, Postgres RPC `complete_recurring_task` |
-| `streaks/` | Habit streak calculation (§5.5, §11.5) | PlanoaKit `Streaks/`, web `lib/streaks`, nightly rollup job |
-| `quick-add/` | Natural-language capture grammar (§3.5, §8.2) | PlanoaKit `QuickAddParser/`, web `lib/quickadd` |
+| `recurrence/` | Recurrence rule semantics + next-occurrence math (§11.1) | StructoKit `Recurrence/`, web `lib/recurrence`, Postgres RPC `complete_recurring_task` |
+| `streaks/` | Habit streak calculation (§5.5, §11.5) | StructoKit `Streaks/`, web `lib/streaks`, nightly rollup job |
+| `quick-add/` | Natural-language capture grammar (§3.5, §8.2) | StructoKit `QuickAddParser/`, web `lib/quickadd` |
 | `tokens/` | Design tokens source of truth (§9.12) | generated Swift constants + CSS variables |
 
 Filter AST spec (`filters/`) lands with V1 (§10.10).

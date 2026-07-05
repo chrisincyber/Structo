@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Planoa design tokens — generated-by-hand from spec/tokens/tokens.json.
+/* Structo design tokens — generated-by-hand from spec/tokens/tokens.json.
    Warm gray neutrals, one teal accent (§9.6). Keep in sync with the spec;
    the token pipeline replaces this block later. */
 :root {

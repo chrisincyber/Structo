@@ -16,7 +16,7 @@ export type SyncOp =
 // Outbox (IndexedDB, append-ordered by op key)
 // ---------------------------------------------------------------------------
 
-const DB_NAME = "planoa";
+const DB_NAME = "structo";
 const STORE = "outbox";
 
 function openDb(): Promise<IDBDatabase> {

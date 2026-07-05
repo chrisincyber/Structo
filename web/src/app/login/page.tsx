@@ -28,7 +28,7 @@ export default function LoginPage() {
   return (
     <main className="flex flex-1 items-center justify-center p-6">
       <div className="w-full max-w-sm">
-        <h1 className="text-3xl font-bold tracking-tight">Planoa</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Structo</h1>
         <p className="mt-1 text-muted">Your day, in one place.</p>
 
         {!configured ? (

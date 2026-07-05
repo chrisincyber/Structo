@@ -12,7 +12,7 @@ const EPOCH: Cursor = {
   after_id: "00000000-0000-0000-0000-000000000000",
 };
 
-const CURSOR_KEY = "planoa.cursors.v1";
+const CURSOR_KEY = "structo.cursors.v1";
 
 function loadCursors(): Partial<Record<SyncedTable, Cursor>> {
   if (typeof window === "undefined") return {};

@@ -1,8 +1,8 @@
-# Planoa
+# Structo
 
 Premium productivity for iOS and web: Todoist-depth task management, native habit tracking, and a modular personalized home dashboard — in one calm, fast app.
 
-**Start here:** [`PLANOA_BLUEPRINT.md`](./PLANOA_BLUEPRINT.md) — the execution-ready product and technical blueprint covering positioning, feature architecture, the habit integration model, the modular home system, IA and UX flows, the design system, the full data model, business logic rules, technical/iOS/web architecture, the MVP definition, phased roadmap, engineering backlog, and locked decisions.
+**Start here:** [`STRUCTO_BLUEPRINT.md`](./STRUCTO_BLUEPRINT.md) — the execution-ready product and technical blueprint covering positioning, feature architecture, the habit integration model, the modular home system, IA and UX flows, the design system, the full data model, business logic rules, technical/iOS/web architecture, the MVP definition, phased roadmap, engineering backlog, and locked decisions.
 
 ## Stack (decided)
 
@@ -17,7 +17,7 @@ Premium productivity for iOS and web: Todoist-depth task management, native habi
 ```
 spec/       shared behavior spec: grammars, conformance vectors, design tokens (M0 — in place)
 supabase/   migrations (schema + RLS), pgTAP persona tests (M0 — in place)
-ios/        SwiftUI app + SPM packages (PlanoaKit, PlanoaData, PlanoaUI, Features) — next
+ios/        SwiftUI app + SPM packages (StructoKit, StructoData, StructoUI, Features) — next
 web/        Next.js app — next
 ```
 

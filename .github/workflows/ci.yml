@@ -62,12 +62,12 @@ jobs:
       PGHOST: localhost
       PGUSER: postgres
       PGPASSWORD: postgres
-      PGDATABASE: planoa_ci
+      PGDATABASE: structo_ci
     steps:
       - uses: actions/checkout@v4
 
       - name: Create database
-        run: createdb planoa_ci
+        run: createdb structo_ci
 
       - name: Apply auth shim + migrations in order
         run: |
