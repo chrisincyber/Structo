@@ -7,6 +7,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { completeTask } from "@/lib/ops";
 import type { Task } from "@/lib/types";
+import { useUi } from "@/lib/ui";
 
 const PRIORITY_COLOR: Record<number, string> = {
   1: "border-p1",
@@ -17,6 +18,7 @@ const PRIORITY_COLOR: Record<number, string> = {
 
 export function TaskRow({ task }: { task: Task }) {
   const queryClient = useQueryClient();
+  const openTask = useUi((s) => s.openTask);
 
   async function onComplete() {
     // Optimistic removal from every task list containing it
@@ -35,7 +37,13 @@ export function TaskRow({ task }: { task: Task }) {
         onClick={onComplete}
         className={`h-5 w-5 shrink-0 rounded-md border-2 ${PRIORITY_COLOR[task.priority]} transition-colors hover:bg-accent/20`}
       />
-      <div className="min-w-0 flex-1">
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => openTask(task.id)}
+        onKeyDown={(e) => e.key === "Enter" && openTask(task.id)}
+        className="min-w-0 flex-1 cursor-pointer"
+      >
         <p className="truncate text-[15px]">{task.title}</p>
         {(task.due_date || task.recurrence_text) && (
           <p className="mt-0.5 text-xs text-muted">

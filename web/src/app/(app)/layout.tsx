@@ -7,6 +7,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { ProjectsNav } from "@/components/ProjectsNav";
+import { TaskDetail } from "@/components/TaskDetail";
 import { signOut, useAuth } from "@/lib/auth";
 import { subscribeToPokes } from "@/lib/poke";
 
@@ -57,6 +59,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
+        <ProjectsNav />
         <button
           onClick={() => void signOut()}
           className="mt-auto rounded-[10px] px-2 py-1.5 text-left text-sm text-muted hover:bg-hairline/50"
@@ -65,6 +68,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </button>
       </aside>
       <main className="mx-auto w-full max-w-[680px] flex-1 px-6 py-8">{children}</main>
+      <TaskDetail />
     </div>
   );
 }

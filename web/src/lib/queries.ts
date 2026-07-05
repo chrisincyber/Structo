@@ -96,3 +96,47 @@ export async function fetchHabitLogsToday(): Promise<HabitLog[]> {
   if (error) throw error;
   return data as HabitLog[];
 }
+
+export async function fetchProject(id: string): Promise<Project> {
+  const { data, error } = await supabase()
+    .from("projects")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  return data as Project;
+}
+
+export async function fetchTasksByProject(projectId: string): Promise<Task[]> {
+  const { data, error } = await supabase()
+    .from("tasks")
+    .select("*")
+    .eq("project_id", projectId)
+    .is("deleted_at", null)
+    .is("completed_at", null)
+    .order("rank");
+  if (error) throw error;
+  return data as Task[];
+}
+
+/** The user's personal workspace id (from their inbox project). */
+export async function fetchWorkspaceId(): Promise<string> {
+  const { data, error } = await supabase()
+    .from("projects")
+    .select("workspace_id")
+    .eq("is_inbox", true)
+    .is("deleted_at", null)
+    .single();
+  if (error) throw error;
+  return data.workspace_id as string;
+}
+
+export async function fetchTaskById(id: string): Promise<Task | null> {
+  const { data, error } = await supabase()
+    .from("tasks")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return data as Task | null;
+}
