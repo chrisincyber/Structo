@@ -10,9 +10,11 @@ export default function RootPage() {
 
   useEffect(() => {
     if (loading) return;
-    // Home is the default landing screen (§7.2); default_landing preference
-    // overrides this once preferences are wired in.
-    router.replace(configured && session ? "/home" : "/login");
+    // Home is the default landing (§7.2); the synced default_landing
+    // preference is mirrored to localStorage by the app shell.
+    const landing =
+      localStorage.getItem("structo.landing") === "today" ? "/today" : "/home";
+    router.replace(configured && session ? landing : "/login");
   }, [loading, session, configured, router]);
 
   return <main className="flex flex-1 items-center justify-center text-muted">…</main>;

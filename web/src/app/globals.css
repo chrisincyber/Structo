@@ -55,3 +55,19 @@ body {
   font-family: var(--font-inter), system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
 }
+
+/* Accent variants (§9.6) — applied via data-accent on <html>; values from
+   spec/tokens accent table. Contrast stays white (light) / near-black (dark). */
+:root[data-accent="indigo"] { --accent: #4338ca; }
+:root[data-accent="plum"] { --accent: #86198f; }
+:root[data-accent="ochre"] { --accent: #a16207; }
+:root[data-accent="forest"] { --accent: #166534; }
+:root[data-accent="slate"] { --accent: #334155; }
+
+@media (prefers-color-scheme: dark) {
+  :root[data-accent="indigo"] { --accent: #818cf8; }
+  :root[data-accent="plum"] { --accent: #e879f9; }
+  :root[data-accent="ochre"] { --accent: #facc15; }
+  :root[data-accent="forest"] { --accent: #4ade80; }
+  :root[data-accent="slate"] { --accent: #94a3b8; }
+}

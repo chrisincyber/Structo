@@ -1,16 +1,19 @@
 "use client";
 
 // App shell (§7.2): persistent left sidebar + content pane. Auth-guarded;
-// subscribes to the per-user poke channel and invalidates queries on change.
+// subscribes to the per-user poke channel and invalidates queries on change;
+// applies the synced accent preference to the document root.
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { ProjectsNav } from "@/components/ProjectsNav";
 import { TaskDetail } from "@/components/TaskDetail";
 import { signOut, useAuth } from "@/lib/auth";
 import { subscribeToPokes } from "@/lib/poke";
+import { supabase } from "@/lib/supabase";
+import type { UserPreferences } from "@/lib/types";
 
 const NAV = [
   { href: "/home", label: "Home" },
@@ -18,7 +21,16 @@ const NAV = [
   { href: "/upcoming", label: "Upcoming" },
   { href: "/inbox", label: "Inbox" },
   { href: "/habits", label: "Habits" },
+  { href: "/search", label: "Search" },
 ] as const;
+
+const NAV_KEYS: Record<string, string> = {
+  h: "/home",
+  t: "/today",
+  u: "/upcoming",
+  i: "/inbox",
+  b: "/habits",
+};
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { session, loading, configured } = useAuth();
@@ -36,6 +48,49 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       void queryClient.invalidateQueries({ queryKey: [table] });
     });
   }, [session, queryClient]);
+
+  const prefs = useQuery({
+    queryKey: ["user_preferences"],
+    queryFn: async (): Promise<UserPreferences> => {
+      const { data, error } = await supabase()
+        .from("user_preferences")
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data as UserPreferences;
+    },
+    enabled: Boolean(session),
+  });
+
+  useEffect(() => {
+    if (prefs.data?.accent) {
+      document.documentElement.dataset.accent = prefs.data.accent;
+      localStorage.setItem("structo.landing", prefs.data.default_landing);
+    }
+  }, [prefs.data]);
+
+  // g-then-key navigation + f for search (§14.3)
+  useEffect(() => {
+    let pendingG = false;
+    function onKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+        return;
+      const key = e.key.toLowerCase();
+      if (pendingG && NAV_KEYS[key]) {
+        e.preventDefault();
+        router.push(NAV_KEYS[key]);
+        pendingG = false;
+        return;
+      }
+      pendingG = key === "g";
+      if (key === "f") {
+        e.preventDefault();
+        router.push("/search");
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [router]);
 
   if (loading || !session) {
     return <main className="flex flex-1 items-center justify-center text-muted">Loading…</main>;
@@ -61,12 +116,26 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <ProjectsNav />
-        <button
-          onClick={() => void signOut()}
-          className="mt-auto rounded-[10px] px-2 py-1.5 text-left text-sm text-muted hover:bg-hairline/50"
-        >
-          Sign out
-        </button>
+        <div className="mt-auto space-y-0.5">
+          <Link
+            href="/completed"
+            className="block rounded-[10px] px-2 py-1.5 text-sm text-muted hover:bg-hairline/50"
+          >
+            Completed
+          </Link>
+          <Link
+            href="/settings"
+            className="block rounded-[10px] px-2 py-1.5 text-sm text-muted hover:bg-hairline/50"
+          >
+            Settings
+          </Link>
+          <button
+            onClick={() => void signOut()}
+            className="block w-full rounded-[10px] px-2 py-1.5 text-left text-sm text-muted hover:bg-hairline/50"
+          >
+            Sign out
+          </button>
+        </div>
       </aside>
       <main className="mx-auto w-full max-w-[680px] flex-1 px-6 py-8">{children}</main>
       <TaskDetail />
