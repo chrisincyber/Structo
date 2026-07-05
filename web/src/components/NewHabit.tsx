@@ -74,6 +74,7 @@ export function NewHabit({ onClose }: { onClose: () => void }) {
         reminder_time: null,
         rank: "m",
         is_paused: false,
+        paused_at: null,
         archived_at: null,
         updated_at: new Date().toISOString(),
         deleted_at: null,

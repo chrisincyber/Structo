@@ -15,6 +15,7 @@ import { subscribeToPokes } from "@/lib/poke";
 const NAV = [
   { href: "/home", label: "Home" },
   { href: "/today", label: "Today" },
+  { href: "/upcoming", label: "Upcoming" },
   { href: "/inbox", label: "Inbox" },
   { href: "/habits", label: "Habits" },
 ] as const;

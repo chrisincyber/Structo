@@ -89,6 +89,7 @@ export interface Habit {
   reminder_time: string | null;
   rank: string;
   is_paused: boolean;
+  paused_at: string | null;
   archived_at: string | null;
   updated_at: string;
   deleted_at: string | null;
