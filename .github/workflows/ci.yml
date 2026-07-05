@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, "claude/**"]
   pull_request:
 
 jobs:
@@ -42,6 +42,16 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+
+  swift:
+    name: StructoKit — conformance vectors (Swift)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.0"
+      - run: swift test --package-path ios/Packages/StructoKit
 
   database:
     name: Migrations, RLS personas, sync ops, recurrence vectors
