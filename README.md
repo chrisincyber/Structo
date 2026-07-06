@@ -53,3 +53,7 @@ web/        Next.js app — next
 **Next:** Supabase go-live (needs a free project slot), web deploy, then the SwiftUI app itself (StructoData sync engine + surfaces).
 
 **LIVE:** all migrations (0001–0009), pg_cron schedules, the Realtime poke authorization policy, and the sync-push Edge Function are deployed to the production Supabase project (`Structo`, eu-central region). Signup bootstrap verified against the live database. CI continues to verify every migration against vanilla Postgres 16 with the auth shim.
+
+## Known follow-ups
+
+- **Account deletion ordering:** `tasks.author_id` (and `completed_by`) reference `profiles` without cascade, so deleting an `auth.users` row directly fails while the user still has tasks. The planned account-deletion Edge Function must delete user content first (habit_logs → habits → tasks → sync_ops → user). Found during live E2E verification.
