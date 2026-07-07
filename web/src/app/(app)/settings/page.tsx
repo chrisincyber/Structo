@@ -49,6 +49,39 @@ export default function SettingsPage() {
       .eq("user_id", session!.user.id);
   }
 
+  async function exportData() {
+    const { data, error } = await supabase().rpc("export_account_data");
+    if (error) {
+      alert(`Export failed: ${error.message}`);
+      return;
+    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `structo-export-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function deleteAccount() {
+    const phrase = prompt(
+      "This permanently deletes your account and ALL data (tasks, habits, history). " +
+        'There is no undo. Type "delete" to confirm.',
+    );
+    if (phrase?.trim().toLowerCase() !== "delete") return;
+    const { error } = await supabase().rpc("delete_account");
+    if (error) {
+      alert(`Deletion failed: ${error.message}`);
+      return;
+    }
+    localStorage.clear();
+    await signOut();
+    window.location.href = "/login";
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
@@ -101,12 +134,26 @@ export default function SettingsPage() {
           <h2 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted">
             Account
           </h2>
-          <button
-            onClick={() => void signOut()}
-            className="rounded-[10px] border border-hairline px-3 py-1.5 text-sm text-muted hover:border-accent hover:text-accent"
-          >
-            Sign out
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => void signOut()}
+              className="rounded-[10px] border border-hairline px-3 py-1.5 text-sm text-muted hover:border-accent hover:text-accent"
+            >
+              Sign out
+            </button>
+            <button
+              onClick={() => void exportData()}
+              className="rounded-[10px] border border-hairline px-3 py-1.5 text-sm text-muted hover:border-accent hover:text-accent"
+            >
+              Export my data (JSON)
+            </button>
+            <button
+              onClick={() => void deleteAccount()}
+              className="rounded-[10px] border border-p1/40 px-3 py-1.5 text-sm text-p1 hover:bg-p1/10"
+            >
+              Delete account…
+            </button>
+          </div>
         </section>
       </div>
     </div>
