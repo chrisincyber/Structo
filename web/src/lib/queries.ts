@@ -3,13 +3,14 @@
 // and optimistic updates can invalidate precisely.
 
 import { supabase } from "./supabase";
-import type { Habit, HabitLog, Label, Project, Task } from "./types";
+import type { Habit, HabitLog, Label, Project, Section, Task } from "./types";
 
 export const qk = {
   projects: ["projects"] as const,
   tasksToday: ["tasks", "today"] as const,
   tasksInbox: ["tasks", "inbox"] as const,
   tasksProject: (id: string) => ["tasks", "project", id] as const,
+  sections: (projectId: string) => ["sections", projectId] as const,
   habits: ["habits"] as const,
   habitLogsToday: ["habit_logs", "today"] as const,
   labels: ["labels"] as const,
@@ -191,4 +192,16 @@ export async function fetchLabel(id: string): Promise<Label> {
     .single();
   if (error) throw error;
   return data as Label;
+}
+
+export async function fetchSections(projectId: string): Promise<Section[]> {
+  const { data, error } = await supabase()
+    .from("sections")
+    .select("*")
+    .eq("project_id", projectId)
+    .is("deleted_at", null)
+    .eq("is_archived", false)
+    .order("rank");
+  if (error) throw error;
+  return data as Section[];
 }
