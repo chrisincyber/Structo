@@ -50,9 +50,15 @@ web/        Next.js app — next
 
 **iOS — StructoKit begun:** pure domain package (CivilDate, Recurrence, Streaks) with vector-driven XCTest targets; CI swift job verifies against the same spec vectors as web and Postgres.
 
-**Next:** Supabase go-live (needs a free project slot), web deploy, then the SwiftUI app itself (StructoData sync engine + surfaces).
+**V1 features (web) — in progress:**
+- **Labels**: create/assign inline in task detail, chips on rows, `/label/[id]` filter view, sidebar list. Cross-project; dual-condition RLS verified live.
+- **Sections**: tasks grouped by section on project pages, inline create, per-task move.
+- **Weekly Review** (`/review`, §5.9): habit scorecard, tasks-completed count, one-tap overdue triage, next-week glance.
+- **Account** (§3.9): data export (JSON) + account deletion, both live-tested.
 
-**LIVE:** all migrations (0001–0009), pg_cron schedules, the Realtime poke authorization policy, and the sync-push Edge Function are deployed to the production Supabase project (`Structo`, eu-central region). Signup bootstrap verified against the live database. CI continues to verify every migration against vanilla Postgres 16 with the auth shim.
+**LIVE:** all migrations (0001–0010), pg_cron schedules, the Realtime poke authorization policy, and the sync-push Edge Function are deployed to the production Supabase project (`Structo`, eu-west region). Signup bootstrap, sync ops, labels, sections, and account lifecycle verified against the live database. CI verifies every migration against vanilla Postgres 16 with the auth shim.
+
+**Next:** web deploy (Vercel), remaining V1 (deadlines, comments, collaboration), then the SwiftUI app (StructoData sync engine + surfaces).
 
 ## Known follow-ups
 
