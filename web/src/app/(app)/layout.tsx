@@ -120,6 +120,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <LabelsNav />
         <div className="mt-auto space-y-0.5">
           <Link
+            href="/review"
+            className="block rounded-[10px] px-2 py-1.5 text-sm text-muted hover:bg-hairline/50"
+          >
+            Weekly review
+          </Link>
+          <Link
             href="/completed"
             className="block rounded-[10px] px-2 py-1.5 text-sm text-muted hover:bg-hairline/50"
           >

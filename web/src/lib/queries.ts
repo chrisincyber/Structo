@@ -205,3 +205,38 @@ export async function fetchSections(projectId: string): Promise<Section[]> {
   if (error) throw error;
   return data as Section[];
 }
+
+/** Habit logs on/after a start date (for weekly/monthly review). */
+export async function fetchHabitLogsSince(startDate: string): Promise<HabitLog[]> {
+  const { data, error } = await supabase()
+    .from("habit_logs")
+    .select("*")
+    .is("deleted_at", null)
+    .gte("logged_for", startDate);
+  if (error) throw error;
+  return data as HabitLog[];
+}
+
+/** All open tasks due strictly before today (overdue), across projects. */
+export async function fetchOverdueTasks(): Promise<Task[]> {
+  const { data, error } = await supabase()
+    .from("tasks")
+    .select("*")
+    .is("deleted_at", null)
+    .is("completed_at", null)
+    .lt("due_date", localToday())
+    .order("due_date");
+  if (error) throw error;
+  return data as Task[];
+}
+
+/** Count of completed tasks on/after a date (week scorecard). */
+export async function countCompletedSince(startDate: string): Promise<number> {
+  const { count, error } = await supabase()
+    .from("tasks")
+    .select("id", { count: "exact", head: true })
+    .is("deleted_at", null)
+    .gte("completed_at", `${startDate}T00:00:00`);
+  if (error) throw error;
+  return count ?? 0;
+}
