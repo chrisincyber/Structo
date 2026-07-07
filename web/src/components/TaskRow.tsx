@@ -4,8 +4,10 @@
 // Completion is optimistic: the row leaves the list instantly, the op flows
 // through the mutations funnel, recurring tasks roll server-side.
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { LabelChips } from "@/components/LabelChips";
 import { completeTask } from "@/lib/ops";
+import { fetchTaskLabelMap, qk } from "@/lib/queries";
 import type { Task } from "@/lib/types";
 import { useUi } from "@/lib/ui";
 
@@ -19,6 +21,10 @@ const PRIORITY_COLOR: Record<number, string> = {
 export function TaskRow({ task }: { task: Task }) {
   const queryClient = useQueryClient();
   const openTask = useUi((s) => s.openTask);
+  const { data: labelMap } = useQuery({
+    queryKey: qk.taskLabelMap,
+    queryFn: fetchTaskLabelMap,
+  });
 
   async function onComplete() {
     // Optimistic removal from every task list containing it
@@ -44,7 +50,10 @@ export function TaskRow({ task }: { task: Task }) {
         onKeyDown={(e) => e.key === "Enter" && openTask(task.id)}
         className="min-w-0 flex-1 cursor-pointer"
       >
-        <p className="truncate text-[15px]">{task.title}</p>
+        <p className="truncate text-[15px]">
+          {task.title}
+          <LabelChips labelIds={labelMap?.[task.id] ?? []} />
+        </p>
         {(task.due_date || task.recurrence_text) && (
           <p className="mt-0.5 text-xs text-muted">
             {task.due_date}

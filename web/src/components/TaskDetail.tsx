@@ -6,8 +6,9 @@
 // handled server-side (30-day trash).
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { LabelEditor } from "@/components/LabelChips";
 import { deleteRow, updateRow } from "@/lib/ops";
-import { fetchTaskById } from "@/lib/queries";
+import { fetchTaskById, fetchTaskLabelMap, qk } from "@/lib/queries";
 import type { Task } from "@/lib/types";
 import { useUi } from "@/lib/ui";
 
@@ -25,6 +26,12 @@ export function TaskDetail() {
   const { data: task } = useQuery({
     queryKey: ["tasks", "detail", openTaskId],
     queryFn: () => fetchTaskById(openTaskId!),
+    enabled: Boolean(openTaskId),
+  });
+
+  const { data: labelMap } = useQuery({
+    queryKey: qk.taskLabelMap,
+    queryFn: fetchTaskLabelMap,
     enabled: Boolean(openTaskId),
   });
 
@@ -136,6 +143,17 @@ export function TaskDetail() {
                 ))}
               </div>
             </div>
+
+            <LabelEditor
+              taskId={task.id}
+              assigned={labelMap?.[task.id] ?? []}
+              onChange={(labelIds) => {
+                queryClient.setQueryData<Record<string, string[]>>(
+                  qk.taskLabelMap,
+                  (old) => ({ ...(old ?? {}), [task.id]: labelIds }),
+                );
+              }}
+            />
 
             {task.recurrence_text && (
               <p className="text-sm text-muted">↻ {task.recurrence_text}</p>

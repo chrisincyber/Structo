@@ -8,6 +8,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { LabelsNav } from "@/components/LabelsNav";
 import { ProjectsNav } from "@/components/ProjectsNav";
 import { TaskDetail } from "@/components/TaskDetail";
 import { signOut, useAuth } from "@/lib/auth";
@@ -116,6 +117,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <ProjectsNav />
+        <LabelsNav />
         <div className="mt-auto space-y-0.5">
           <Link
             href="/completed"

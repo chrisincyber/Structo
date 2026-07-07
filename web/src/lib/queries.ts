@@ -3,7 +3,7 @@
 // and optimistic updates can invalidate precisely.
 
 import { supabase } from "./supabase";
-import type { Habit, HabitLog, Project, Task } from "./types";
+import type { Habit, HabitLog, Label, Project, Task } from "./types";
 
 export const qk = {
   projects: ["projects"] as const,
@@ -12,6 +12,9 @@ export const qk = {
   tasksProject: (id: string) => ["tasks", "project", id] as const,
   habits: ["habits"] as const,
   habitLogsToday: ["habit_logs", "today"] as const,
+  labels: ["labels"] as const,
+  taskLabelMap: ["task_labels", "map"] as const,
+  tasksLabel: (id: string) => ["tasks", "label", id] as const,
 };
 
 /** User-local YYYY-MM-DD (floating local dates, §11.12). */
@@ -139,4 +142,53 @@ export async function fetchTaskById(id: string): Promise<Task | null> {
     .maybeSingle();
   if (error) throw error;
   return data as Task | null;
+}
+
+export async function fetchLabels(): Promise<Label[]> {
+  const { data, error } = await supabase()
+    .from("labels")
+    .select("*")
+    .is("deleted_at", null)
+    .order("rank");
+  if (error) throw error;
+  return data as Label[];
+}
+
+/** Map of task_id -> label_id[] for the current user's task_labels. */
+export async function fetchTaskLabelMap(): Promise<Record<string, string[]>> {
+  const { data, error } = await supabase()
+    .from("task_labels")
+    .select("task_id, label_id")
+    .is("deleted_at", null);
+  if (error) throw error;
+  const map: Record<string, string[]> = {};
+  for (const row of data as { task_id: string; label_id: string }[]) {
+    (map[row.task_id] ??= []).push(row.label_id);
+  }
+  return map;
+}
+
+/** Tasks carrying a given label (open, not deleted). */
+export async function fetchTasksByLabel(labelId: string): Promise<Task[]> {
+  const { data, error } = await supabase()
+    .from("task_labels")
+    .select("tasks!inner(*)")
+    .eq("label_id", labelId)
+    .is("deleted_at", null);
+  if (error) throw error;
+  // supabase-js types the embedded relation as an array; each task_labels row
+  // resolves to exactly one task.
+  return (data as unknown as { tasks: Task }[])
+    .map((r) => r.tasks)
+    .filter((t) => t && !t.deleted_at && !t.completed_at);
+}
+
+export async function fetchLabel(id: string): Promise<Label> {
+  const { data, error } = await supabase()
+    .from("labels")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  return data as Label;
 }
