@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+
+jobs:
+  spec-vectors:
+    name: Spec files are well-formed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate spec JSON
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, sys
+          files = sorted(pathlib.Path('spec').rglob('*.json'))
+          assert files, 'no spec JSON files found'
+          for f in files:
+              data = json.loads(f.read_text())
+              if 'vectors' in data:
+                  names = [v['name'] for v in data['vectors']]
+                  assert len(names) == len(set(names)), f'duplicate vector names in {f}'
+              print(f'ok {f}')
+          PY
+
+  web:
+    name: Web — lint, conformance tests, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  swift:
+    name: StructoKit — conformance vectors (Swift)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.0"
+      - run: swift test --package-path ios/Packages/StructoKit
+
+  database:
+    name: Migrations, RLS personas, sync ops, recurrence vectors
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 5432:5432
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: structo_ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create database
+        run: createdb structo_ci
+
+      - name: Apply auth shim + migrations in order
+        run: |
+          psql -v ON_ERROR_STOP=1 -f supabase/tests/helpers/auth_shim.sql
+          for f in supabase/migrations/*.sql; do
+            echo "== $f"
+            psql -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Run SQL test suites
+        run: |
+          for f in supabase/tests/0*.sql; do
+            echo "== $f"
+            psql -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Recurrence conformance vectors vs next_occurrence()
+        run: python3 scripts/check_recurrence_vectors.py | psql -v ON_ERROR_STOP=1 -f -
+
+      - name: Streak conformance vectors vs compute_streak()
+        run: python3 scripts/check_streak_vectors.py | psql -v ON_ERROR_STOP=1 -f -

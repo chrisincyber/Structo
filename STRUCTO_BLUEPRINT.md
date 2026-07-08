@@ -1,9 +1,9 @@
-# Planoa — Product & Technical Blueprint
+# Structo — Product & Technical Blueprint
 
 **Status:** Decided. Execution-ready.
 **Owner:** Product/Engineering founding team
 **Date:** 2026-07-02
-**Working name:** Planoa (iOS + Web at launch, Windows later)
+**Working name:** Structo (iOS + Web at launch, Windows later)
 
 This is not a brainstorm. Every section below is a decision. Where alternatives existed, they were evaluated and closed. Open questions are explicitly flagged as such; everything else is locked.
 
@@ -11,11 +11,11 @@ This is not a brainstorm. Every section below is a decision. Where alternatives 
 
 ## 1. EXECUTIVE PRODUCT DECISION
 
-**What Planoa is.** Planoa is a premium personal productivity system that unifies deep task management (Todoist-class), native habit tracking, and a modular, personalized home dashboard into one calm, fast app. It is the single place a serious person plans their day: what must get done (tasks), what must be sustained (habits), and a home screen that shows exactly — and only — what matters to them.
+**What Structo is.** Structo is a premium personal productivity system that unifies deep task management (Todoist-class), native habit tracking, and a modular, personalized home dashboard into one calm, fast app. It is the single place a serious person plans their day: what must get done (tasks), what must be sustained (habits), and a home screen that shows exactly — and only — what matters to them.
 
 **Who it is for.** Individual professionals and ambitious personal-life organizers, 22–45, who currently run Todoist/Things/Reminders *plus* a separate habit app (Streaks, HabitKit, Waterllama) *plus* mental glue between them. They pay for software, care about design, and are tired of stitching three apps together every morning.
 
-**Why it can win.** The task-app market is mature but structurally fragmented: no leading product treats habits as a first-class citizen alongside tasks, and none offers a genuinely personalized home surface. Todoist's home is a list; Things has no habits; habit apps have no real task depth. Planoa's bet: **the morning glance is the product.** Win the first 10 seconds of the user's day and you win the day.
+**Why it can win.** The task-app market is mature but structurally fragmented: no leading product treats habits as a first-class citizen alongside tasks, and none offers a genuinely personalized home surface. Todoist's home is a list; Things has no habits; habit apps have no real task depth. Structo's bet: **the morning glance is the product.** Win the first 10 seconds of the user's day and you win the day.
 
 **The wedge vs. Todoist + a habit app.**
 1. **One Today.** Tasks and habits on one screen, one review, one plan — not two apps and a prayer.
@@ -29,7 +29,7 @@ This is not a brainstorm. Every section below is a decision. Where alternatives 
 - **Parity-driven bloat.** We match Todoist where it drives retention (recurrence, filters, quick add), and deliberately skip where it doesn't (karma, goals, board-view-everything).
 - **Cross-platform mediocrity.** We ship native SwiftUI on iOS even though it costs more, because "premium" dies in a webview on iPhone.
 
-**Business model (decided, briefly):** Freemium. Free: full task core, 5 projects, 3 habits, core widgets. **Planoa Pro** ($4.99/mo, $39.99/yr): unlimited projects/habits, saved filters, attachments, collaboration, advanced widgets, review analytics. Price anchored under Todoist Pro to ease switching.
+**Business model (decided, briefly):** Freemium. Free: full task core, 5 projects, 3 habits, core widgets. **Structo Pro** ($4.99/mo, $39.99/yr): unlimited projects/habits, saved filters, attachments, collaboration, advanced widgets, review analytics. Price anchored under Todoist Pro to ease switching.
 
 ---
 
@@ -41,7 +41,7 @@ This is not a brainstorm. Every section below is a decision. Where alternatives 
 |---|---------|-------------|------------------|
 | 1 | **The Optimizer** | 25–40, tech/design/finance professional, currently pays for Todoist/Things AND a habit app | Consolidation + polish; already proven willingness to pay |
 | 2 | **The Life-Systems Builder** | Runs personal routines seriously — gym, reading, supplements, sleep — and manages life admin as projects | Habits are first-class here, nowhere else |
-| 3 | **The Recovering Notion User** | Built an elaborate Notion dashboard, abandoned it because it was slow and manual | Planoa is the dashboard that maintains itself |
+| 3 | **The Recovering Notion User** | Built an elaborate Notion dashboard, abandoned it because it was slow and manual | Structo is the dashboard that maintains itself |
 | 4 | **Couples/duos** (later) | Shared household projects + individual habits | Collaboration-lite drives network retention in V1+ |
 
 ### Primary jobs-to-be-done
@@ -69,10 +69,10 @@ This is not a brainstorm. Every section below is a decision. Where alternatives 
 3. "Jack of all trades" positioning confusion → mitigated by leading marketing with *one* message: "Your day, in one place."
 4. Sync bugs destroy trust irreversibly → mitigated by the conservative sync architecture in §11/§12 (append-only logs, idempotent ops).
 
-### Why Planoa over Todoist + habit tracker combo
+### Why Structo over Todoist + habit tracker combo
 - **One data model of "my day"** → cross-domain views no combo can produce (e.g., "you complete 40% more tasks on days you work out" — V3 insight, but the data accrues from day one).
 - **One capture point, one review, one notification system, one subscription.**
-- **Design coherence**: two apps never share a design language; Planoa's Today is composed, not concatenated.
+- **Design coherence**: two apps never share a design language; Structo's Today is composed, not concatenated.
 
 ### Intentionally omitted (forever, or near-forever)
 - Karma/points/goals/gamification of any kind
@@ -176,7 +176,7 @@ Classification: **LC** = launch-critical (MVP), **P2** = phase 2 (V1), **P3** = 
 | Feature | Phase | Why it matters | Retention weight | Tech difficulty | UX difficulty |
 |---|---|---|---|---|---|
 | Inbox | LC | Capture trust: everything has a home | High | Low | Low |
-| Today view | LC | The daily anchor; Planoa's is tasks+habits | Critical | Low | Medium |
+| Today view | LC | The daily anchor; Structo's is tasks+habits | Critical | Low | Medium |
 | Upcoming view | LC | Weekly planning surface | High | Medium | Medium |
 | Projects + sections | LC | Baseline organization | High | Low | Low |
 | Subtasks | LC | Expected depth; absence reads as "toy" | Medium | Medium | Medium |
@@ -315,11 +315,11 @@ V1: Project Peek (pin one project), Weekly Review card (appears Sunday), Overdue
 Three sizes total — S (1×1), M (2×1), L (2×2) on the phone's 2-column grid. Web maps the same instances onto a 12-column grid: S→3 cols, M→6, L→6 wide/2 rows (§10.18 for the layout model). **MVP: each widget ships at one fixed size; user resizing is V1.** Resizing is pure delight, zero utility — cut from MVP without guilt.
 
 ### 6.6 Interactive vs. informational
-Rule: **every widget must support at least one direct action or a meaningful tap-through.** Checkbox completion, +1 logging, and capture happen *in place* with optimistic UI — no navigation. This is what separates Planoa's home from a pretty report.
+Rule: **every widget must support at least one direct action or a meaningful tap-through.** Checkbox completion, +1 logging, and capture happen *in place* with optimistic UI — no navigation. This is what separates Structo's home from a pretty report.
 
 ### 6.7 iPhone interaction model
 - Scroll: single vertical scroll, header pinned lightly.
-- Edit mode: **explicit "Edit" via header ellipsis → grid gets drag handles + remove badges; drag to reorder; "+ Add widget" opens a bottom-sheet gallery with live previews.** Deliberately *not* the iOS wiggle — wiggle reads as chaos; Planoa's edit mode is calm and modal. Long-press on a widget offers a shortcut menu (Edit layout / Widget settings).
+- Edit mode: **explicit "Edit" via header ellipsis → grid gets drag handles + remove badges; drag to reorder; "+ Add widget" opens a bottom-sheet gallery with live previews.** Deliberately *not* the iOS wiggle — wiggle reads as chaos; Structo's edit mode is calm and modal. Long-press on a widget offers a shortcut menu (Edit layout / Widget settings).
 - Widget settings (e.g., which habit Quick Log tracks): long-press → "Widget options" sheet.
 
 ### 6.8 Web interaction model
@@ -377,7 +377,7 @@ Secondary navigation: project detail → sections, task detail sheet (comments/a
 **Layout: persistent left sidebar + content pane + global command bar.**
 
 Sidebar (top → bottom):
-1. Planoa mark + workspace/account switcher (future-proofing; single item at MVP)
+1. Structo mark + workspace/account switcher (future-proofing; single item at MVP)
 2. **Search / Cmd-K** field
 3. **Home**, **Today** (with count), **Upcoming**, **Inbox** (with count)
 4. **Habits**
@@ -403,13 +403,13 @@ Format per flow: **Goal → Sequence → Actions → Edge cases → UX notes.**
 
 ### 8.1 Onboarding
 - **Goal:** From App Store to a personally meaningful Home in under 90 seconds.
-- **Sequence:** (1) Welcome — one screen, one sentence ("Your day, in one place"), sign-in options. (2) Auth: Sign in with Apple (primary on iOS) / Google / email magic link. (3) "What are you organizing?" — chips: Work · Personal · Health · Study (multi-select) → seeds 1–2 starter projects. (4) "Pick habits to build" — 6 curated suggestions (Workout, Water, Read, Sleep by 11, Supplements, Custom) → creates chosen habits with sensible defaults. (5) Notification permission, *with the payoff shown first* ("Planoa reminds you at the moment you chose — nothing more"). (6) Land on Home, pre-populated with their projects, habits, and 2 sample tasks in Inbox marked as samples.
+- **Sequence:** (1) Welcome — one screen, one sentence ("Your day, in one place"), sign-in options. (2) Auth: Sign in with Apple (primary on iOS) / Google / email magic link. (3) "What are you organizing?" — chips: Work · Personal · Health · Study (multi-select) → seeds 1–2 starter projects. (4) "Pick habits to build" — 6 curated suggestions (Workout, Water, Read, Sleep by 11, Supplements, Custom) → creates chosen habits with sensible defaults. (5) Notification permission, *with the payoff shown first* ("Structo reminds you at the moment you chose — nothing more"). (6) Land on Home, pre-populated with their projects, habits, and 2 sample tasks in Inbox marked as samples.
 - **Actions:** every step skippable; total taps ≤ 8.
 - **Edge cases:** skip-all lands on default Home with sample content; declined notifications → banner appears only later, contextually, when the user sets their first reminder; existing account → straight to Home with synced data.
 - **UX notes:** No feature tour, no coach marks, no 9-screen carousel. The seeded content *is* the tutorial. Ask for the notification permission after value is visible on screen behind the dialog.
 
 ### 8.2 First task creation
-- **Goal:** Trust: "I typed a thought, Planoa understood it."
+- **Goal:** Trust: "I typed a thought, Structo understood it."
 - **Sequence:** Home → "+" → composer sheet → type "Call dentist tomorrow 10am" → parsed chips appear live (📅 Tomorrow 10:00) → Enter → toast "Added to Inbox · View".
 - **Actions:** type; optionally tap chips to adjust; Enter saves; sheet stays open for rapid entry (Todoist behavior — deliberate copy, it's correct), swipe down closes.
 - **Edge cases:** misparse ("Read Tomorrowland review" → tomorrow) — chips are visible pre-save and one tap removes the date; date-only text like "tomorrow" alone → becomes title, no date (title must be non-empty after extraction, else extraction is cancelled).
@@ -417,7 +417,7 @@ Format per flow: **Goal → Sequence → Actions → Edge cases → UX notes.**
 
 ### 8.3 Quick capture (steady-state)
 - **Goal:** <3 seconds, from anywhere, including offline.
-- **Sequence:** any tab → "+" → type → Enter → done. iOS share sheet: share URL/text from Safari → Planoa extension → pre-filled composer → save. Web: `Q` from any route.
+- **Sequence:** any tab → "+" → type → Enter → done. iOS share sheet: share URL/text from Safari → Structo extension → pre-filled composer → save. Web: `Q` from any route.
 - **Edge cases:** offline → saves locally, syncs later, zero UI difference (no "offline!" banner in the composer — trust is silent); capture during edit-mode on Home → edit mode exits first.
 - **UX notes:** Composer opens with keyboard up in <200ms — this is a hard performance budget, tested in CI (§13.10).
 
@@ -752,24 +752,24 @@ Supabase Postgres. Conventions: all PKs are **client-generated UUIDv7** (offline
 ### 13.1 Project & module structure (SPM local packages, one app target)
 ```
 ios/
-  Planoa.xcodeproj (thin app target + widget/intents/share extensions)
+  Structo.xcodeproj (thin app target + widget/intents/share extensions)
   Packages/
-    PlanoaKit/         // domain models, business logic (recurrence, streaks, parser, filter eval) — UI-free, spec-conformant
-    PlanoaData/        // GRDB schema, DAOs, sync engine, outbox, supabase-swift client
-    PlanoaUI/          // design system: tokens (generated), components (TaskRow, HabitChip, WidgetCard, Composer)
+    StructoKit/         // domain models, business logic (recurrence, streaks, parser, filter eval) — UI-free, spec-conformant
+    StructoData/        // GRDB schema, DAOs, sync engine, outbox, supabase-swift client
+    StructoUI/          // design system: tokens (generated), components (TaskRow, HabitChip, WidgetCard, Composer)
     Features/          // one module per surface: Home, TodayUpcoming, Browse, ProjectDetail, Habits, SearchFeature, SettingsFeature, Composer
 ```
-Dependency rule: Features → PlanoaUI + PlanoaKit + PlanoaData interfaces; PlanoaKit depends on nothing (pure Swift — this is where conformance vectors run).
+Dependency rule: Features → StructoUI + StructoKit + StructoData interfaces; StructoKit depends on nothing (pure Swift — this is where conformance vectors run).
 
 ### 13.2 Navigation
-- `TabView` (4 tabs) + a root coordinator holding a `NavigationStack` path per tab (state-restorable, deep-linkable: `planoa://task/{id}` from notifications/widgets).
+- `TabView` (4 tabs) + a root coordinator holding a `NavigationStack` path per tab (state-restorable, deep-linkable: `structo://task/{id}` from notifications/widgets).
 - Sheets for: composer, task detail, widget gallery, settings. Sheet-first for transient content (§7.1).
 
 ### 13.3 State management
-- **Vanilla SwiftUI + @Observable (Observation framework), no TCA.** Pattern: each feature has an `@Observable` view-model owning view state, reading from PlanoaData's query layer and writing via a single `ActionDispatcher` (all mutations funnel through one API → guarantees every write hits outbox + optimistic store consistently).
+- **Vanilla SwiftUI + @Observable (Observation framework), no TCA.** Pattern: each feature has an `@Observable` view-model owning view state, reading from StructoData's query layer and writing via a single `ActionDispatcher` (all mutations funnel through one API → guarantees every write hits outbox + optimistic store consistently).
 - Live queries: GRDB `ValueObservation` → AsyncSequence → view models. The DB is the single source of UI truth (server pushes land in DB; UI reacts) — unidirectional without framework ceremony.
 
-### 13.4 Domain organization — PlanoaKit mirrors `spec/`: `Recurrence/`, `Streaks/`, `QuickAddParser/`, `FilterAST/` (V1), `DateBuckets/`. Each has a vector-driven test target. Any behavior change starts as a spec-vector PR.
+### 13.4 Domain organization — StructoKit mirrors `spec/`: `Recurrence/`, `Streaks/`, `QuickAddParser/`, `FilterAST/` (V1), `DateBuckets/`. Each has a vector-driven test target. Any behavior change starts as a spec-vector PR.
 
 ### 13.5 Local persistence
 - **GRDB (SQLite)** — mirrors Postgres schema (same table/column names — one mental model, mechanical mapping), plus `outbox` (op_id, op json, created_at, attempts), `sync_state` (per-table cursor), FTS5 tables for search. Migrations via GRDB DatabaseMigrator, versioned alongside server migrations in the same PRs.
@@ -790,7 +790,7 @@ Dependency rule: Features → PlanoaUI + PlanoaKit + PlanoaData interfaces; Plan
 - **App Intents/Siri + Shortcuts** (V1): "Add task", "Log water". **Share extension** (MVP). **Spotlight indexing** (V2).
 
 ### 13.10 Testing & maintainability
-- Vector conformance tests (PlanoaKit) in CI on every PR; sync simulation harness (scripted interleavings → convergence asserts); XCUITest golden flows (capture <200ms budget asserted via signposts, complete, log habit, edit home); snapshot tests for PlanoaUI components in light/dark/DynamicType-XL.
+- Vector conformance tests (StructoKit) in CI on every PR; sync simulation harness (scripted interleavings → convergence asserts); XCUITest golden flows (capture <200ms budget asserted via signposts, complete, log habit, edit home); snapshot tests for StructoUI components in light/dark/DynamicType-XL.
 - Guidelines: no singletons except the DB pool; every mutation through ActionDispatcher; features can't import each other (coordinator mediates); os_signpost on capture/log hot paths; SwiftLint + swift-format in CI.
 
 ---
@@ -837,7 +837,7 @@ Prerequisite checklist (owned by web team from V1): keyboard completeness, offli
 
 ## 16. MVP DEFINITION
 
-The MVP is **"single-player Planoa, fully trustworthy."** Ship quality on a narrow surface; the four hard LC systems (sync, offline-iOS, recurrence, NL capture) at full polish; everything social and analytical deferred.
+The MVP is **"single-player Structo, fully trustworthy."** Ship quality on a narrow surface; the four hard LC systems (sync, offline-iOS, recurrence, NL capture) at full polish; everything social and analytical deferred.
 
 ### Exactly IN
 - Auth (Apple/Google/magic link), onboarding (§8.1)
@@ -858,7 +858,7 @@ Collaboration/sharing/assignees (V1) · comments & attachments (V1) · saved fil
 Capture in 3 seconds from anywhere including offline → organize into projects → plan Today/Upcoming → complete recurring routines correctly → track 3 habits with streaks from Home → get reminded reliably → trust sync across iPhone and web.
 
 ### What creates the early "I need this"
-The morning moment: open Planoa → Home shows *your* day — 4 tasks, water ring at 2/8, workout chip — you log a glass with one tap and complete a task without leaving the screen. That composed 10-second loop is the retention hook and must be flawless before anything else ships.
+The morning moment: open Structo → Home shows *your* day — 4 tasks, water ring at 2/8, workout chip — you log a glass with one tap and complete a task without leaving the screen. That composed 10-second loop is the retention hook and must be flawless before anything else ships.
 
 ### Looks simple, actually expensive (budget honestly)
 1. Sync + iOS offline engine (~the single biggest line item)
@@ -1027,6 +1027,6 @@ Milestones M0–M8 to launch. Epics tagged [iOS] [Web] [BE] [Spec] [Design]. Two
 9. Reminders: server pg_cron sweep + Edge dispatch as source of truth, iOS local notifications as offline fallback, dedupe ledger between them.
 10. All mutations on both clients flow through one dispatcher/funnel module — the seam that makes offline, optimism, telemetry, and the V2 local-first web swap tractable.
 
-**Bottom line.** Planoa wins by being the first app that treats a person's day — obligations *and* practices — as one designed object. The blueprint above is deliberately narrow where narrowness protects quality, and deliberately expensive where the cost is invisible but existential (sync, recurrence, reminders). Build M0–M1 before any screens matter, hold the §16 line, and ship the morning moment flawlessly.
+**Bottom line.** Structo wins by being the first app that treats a person's day — obligations *and* practices — as one designed object. The blueprint above is deliberately narrow where narrowness protects quality, and deliberately expensive where the cost is invisible but existential (sync, recurrence, reminders). Build M0–M1 before any screens matter, hold the §16 line, and ship the morning moment flawlessly.
 
 — End of blueprint.
